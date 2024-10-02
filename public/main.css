@@ -1,0 +1,13 @@
+.card{
+    width: 30%;
+    margin: 10px;
+    border: 2px solid;
+}
+
+span{
+    display: inline-block;
+}
+
+button{
+    background-color: orange;
+}
