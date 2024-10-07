@@ -40,14 +40,14 @@ export class AppController {
     if(!/^.+, \d{4}, .+, .+ .+.$/.test(PaymentDto.ship_address)){
       errors.push("A szállítási cím (Ország, Irányítószám, Város, Utca házszám)")
     }
-    if(!/^[A-Z]{2}-\d{4}$/.test(PaymentDto.coupon_code) && PaymentDto.coupon_code){
+    if(!/^[A-Z]{2}-\d{4}$/.test(PaymentDto.coupon_code) && !(PaymentDto.coupon_code == "")){
       console.log(PaymentDto.coupon_code)
       errors.push("A kuponkód helytelen")
     }
     if(!/^\d\d\/\d\d$/.test(PaymentDto.exp_date)){
       errors.push("lejárati dátum hibás")
     }
-    else if( parseInt("20"+PaymentDto.exp_date.split('/')[1]) < new Date().getFullYear() || parseInt(PaymentDto.exp_date.split('/')[0]) < new Date().getMonth()){
+    else if( parseInt("20"+""+PaymentDto.exp_date.split('/')[1]) < new Date().getFullYear() || parseInt(PaymentDto.exp_date.split('/')[0]) < new Date().getMonth()){
       errors.push("A kártya már lejárt")
     }
     if(!/^\d{3}$/.test(PaymentDto.sec_code)){
@@ -79,6 +79,6 @@ export class AppController {
   @Get('paymentSuccess')
   @Render('paymentSuccess')
   paymentSuccess(){
-
+    
   }
 }
