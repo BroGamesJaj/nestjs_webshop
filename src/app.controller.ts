@@ -2,6 +2,8 @@ import { Controller, Get, Render, Query, Body, Res, Post } from '@nestjs/common'
 import { AppService } from './app.service';
 import { Payment } from './Payment';
 import { PaymentDto} from './PaymentBack.dto';
+import { EladoDto } from './elado.dto';
+import { Elado } from './Elado';
 import { Response } from 'express';
 @Controller()
 export class AppController {
@@ -79,6 +81,66 @@ export class AppController {
   @Get('paymentSuccess')
   @Render('paymentSuccess')
   paymentSuccess(){
+    
+  }
+
+  @Get('eladoRegisztracio')
+  @Render('eladoRegisztracio')
+  eladoRegisztracio(){
+
+    return {
+      data: {},
+      errors: []
+    }
+  }
+
+  @Post('eladoRegisztracio')
+  eladoRegisztracioPost(@Body() EladoDto: EladoDto,@Res() response: Response){
+    const fs = require('node:fs');
+
+    
+    let errors = []
+    if(!EladoDto.name || !EladoDto.elado_szamla || !EladoDto.terms){
+      errors.push("Minden adatot ki kell tölteni!")
+    }
+    if(!/^\S.*$/.test(EladoDto.name)){
+      errors.push("A név nem megfelelő")
+    }
+    if(!/^\d{8}-\d{8}(-\d{8})?$/.test(EladoDto.elado_szamla)){
+      errors.push("A számlaszám helytelen formátumú!")
+    }
+    if(EladoDto.terms != "1"){
+      errors.push("A szerződési feltételeket el kell fogadni!")
+    }
+    
+    if(errors.length > 0){
+      response.render('eladoRegisztracio', 
+        {
+          data: EladoDto,
+          errors: errors
+        }
+      )
+      return;
+    }
+
+    
+    const newElado: Elado = {
+      name: EladoDto.name,
+      elado_szamla: EladoDto.elado_szamla
+    }
+    const content = newElado.name+";"+newElado.elado_szamla+"\n";
+    fs.writeFile('./src/elado.csv', content, { flag: 'a+' }, err => {
+      if (err) {
+        console.error(err);
+      } else {
+      }
+    });
+    response.redirect('sikeresRegisztracio')
+  }
+
+  @Get('sikeresRegisztracio')
+  @Render('sikeresRegisztracio')
+  sikeresRegisztracio(){
     
   }
 }
